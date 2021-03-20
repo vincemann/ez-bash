@@ -1,0 +1,265 @@
+
+# EZ BASH START	by vincemann @ https://github.com/vincemann/ez-bash ____________________________________________________________________________________________
+
+
+# Eternal bash history.
+# ---------------------------------------------------------------
+# this is set in local bashrc by install script:
+# HISTSIZE=
+# HISTFILESIZE=
+
+# Undocumented feature which sets the size to "unlimited".
+# http://stackoverflow.com/questions/9457233/unlimited-bash-history
+export HISTSIZE=
+export HISTFILESIZE=
+# Change the file location because certain bash sessions truncate .bash_history file upon close.
+# http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
+export HISTFILE="§HOME/.bash_eternal_history"
+# Force prompt to write history after every command.
+# http://superuser.com/questions/20900/bash-history-loss
+export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+# ---------------------------------------------------------------
+
+# https://unix.stackexchange.com/questions/119/colors-in-man-pages
+# Get color support for 'less' thus also in manpages
+export LESS="--RAW-CONTROL-CHARS"
+[[ -f ~/.LESS_TERMCAP ]] && . ~/.LESS_TERMCAP
+
+path_func()
+{
+	file="$1"
+	abs_path=$(readlink -n -f "$file")
+	ret=$?
+	echo -n "$abs_path" | copy_func
+	log "$abs_path"
+	return $ret
+}
+
+where_func()
+{
+	file="$1"
+	path=$(whereis "$file"| cut -d " " -f 2)
+	ret=$?
+	echo -n "$path" | copy_func
+	log "$path"
+	return $ret
+}
+
+popup()
+{
+	# maybe later add new line support:
+	# https://unix.stackexchange.com/questions/231089/how-to-move-forward-in-a-line-in-bash-with-echo
+	msg="$1"
+	time="$2"
+	if [[ -z "$time" ]];then
+		time="1000"
+	fi
+	notify-send "$msg" -t "$time"
+	return $?
+}
+
+
+# merge config of subl user & root
+edit_func()
+{
+	# turn command into string
+	file="$1"
+	cmd_format="subl %s"
+	printf -v cmd "$cmd_format" "$file"	
+	if test -f "$file"; then
+		# file does exist
+		log "editing file"
+		repeat_with_sudo_if_not_writeable "$file" "$cmd"
+	else
+		# file does not exist
+		log "creating file"
+		dir="$file"
+		if [[ "$file" == *"/"* ]]; then
+  			# is path
+  			dir=$(dirname "$file")
+  		else
+  			dir=$(pwd)
+		fi
+		repeat_with_sudo_if_not_writeable "$dir" "$cmd"
+	fi
+	return $?
+}
+
+resolve_alias()
+{
+	echo "${BASH_ALIASES[$1]}"
+}
+
+log()
+{
+	msg="$1"
+	echo "$msg"
+	return $?
+	# echo "$msg" >> "/tmp/gil.bash.log"
+}
+
+loge()
+{
+	>$2 log "$@"
+}
+
+chmodx_func()
+{
+	file="$1"
+	cmd="chmod a+x %s"
+	printf -v res_cmd "$cmd" "$file"	
+	if test -f "$file"; then
+		# file does exist
+		repeat_with_sudo_if_not_writeable "$file" "$res_cmd"
+		return $?
+	else
+		loge "file does not exist"
+		return 1
+	fi
+}
+
+# USE WITH CAUTION
+repeat_with_sudo_if_not_writeable()
+{
+	file="$1"
+	cmd="$2"
+#	log "command :$cmd"
+	test -w "$file"
+	local status=$?
+	if (( status != 0 ));then
+		log "root"
+		sudo $cmd
+		return $?
+	else
+		log "normal user"
+		$cmd
+		return $?
+	fi
+
+}
+
+# USE WITH CAUTION
+reapeat_with_sudo_on_fail()
+{
+	cmd="$1"
+	# try execute command with normal rights
+	$cmd
+	ret=$?
+	if (( status != 0 ));then
+		log "repeating as root"
+		# replace with sudo func? What if cmd contains bash functions?
+		# should already use alias though
+		sudo $cmd
+		ret=$?
+	fi
+	return $ret
+}
+
+# cuts off last newline if present
+copy_func()
+{
+	xclip -rmlastnl -selection clipboard 1>&2>/dev/null
+	ret=$?
+	popup "copied"
+	return $ret
+}
+
+
+copyn_func()
+{
+	xclip -selection clipboard 1>&2>/dev/null
+	ret=$?
+	popup "copied"
+	return $ret
+}
+
+# cuts off last newline
+paste_func()
+{
+	to_paste=$(xclip -rmlastnl -selection clipboard -o)
+	ret=$?
+	echo -n "$to_paste"
+	return $ret
+}
+
+
+pasten_func()
+{
+	to_paste=$(xclip -selection clipboard -o)
+	ret=$?
+	echo -n "$to_paste"
+	return $ret
+}
+
+# see man trash*
+# rm file 		-> puts file to trash
+# rm -ff file 		-> deletes file fully
+rm_func()
+{
+	force="$1"
+	if [[ "$force" == "-ff" ]];then
+		log "forced remove"
+		shift 1
+		# echo "args: $@"
+		rm -rf "$@"
+		return $?
+	fi
+	log "move to trash"
+	trash "$@"
+	return $?
+}
+
+silent_func()
+{
+	$@ 1>&2>/dev/null
+	return $?
+}
+
+
+
+# makes sudo work with bashfunctions and aliases
+sudo_func()
+{
+	out=$(mktemp)
+	err=$(mktemp)
+	# maybe need to replace all " with \"
+	cmd=$(echo -en "${@} 1>\"$out\" 2>\"$err\"")
+	# echo 'command: '"$cmd"''
+	sudo bash -i -c ''"$cmd"'' 1>&2>/dev/null
+	# bash inherits exit code from subshell
+	ret=$?
+	out=$(cat "$out")
+	err=$(cat "$err")
+	if [[ -n "$out" ]];then
+		echo "$out"
+	fi
+	if [[ -n "$err" ]];then
+		>$2 echo "$err"
+	fi
+	return $ret
+}
+
+
+# Aliases
+alias rm=rm_func
+# run in background, if term down, process still runnning
+# works with x so guis will open
+alias back='screen -dm -s'
+# alias backx='screen -dm'
+alias grep='grep --color=auto'
+alias path=path_func
+alias where=where_func
+alias mark='ack --passthru'
+alias copy=copy_func
+# copy without newline
+alias copyn=copyn_func
+alias paste=paste_func
+alias pasten=pasten_func
+# needs to be done so aliases and bashfunctions work with sudo
+alias sudo=sudo_func
+alias e=edit_func
+alias x=chmodx_func
+alias size='sudo du -sh'
+alias silent=silent_func
+
+# EZ BASH END	by vincemann @ https://github.com/vincemann/ez-bash ____________________________________________________________________________________________
