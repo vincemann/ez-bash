@@ -7,18 +7,15 @@ sudo apt install -y ack
 start_pattern="# EZ BASH START"
 end_pattern="# EZ BASH END"
 bashrc="/etc/bash.bashrc"
-start_found=$(sudo cat "$bashrc" | grep --count "$start_pattern")
-end_found=$(sudo cat "$bashrc" | grep --count "$end_pattern")
-
 
 # backup
 sudo cp "$bashrc" "$HOME/.ez-bash-system-bashrc.bak"
 
 # replace vars
-template=$(mktemp)
-cat bashrc-template > "$template"
+template_file=$(mktemp)
+cat bashrc-template > "$template_file"
 
-sed -i -e "s@§HOME@$HOME@g" "$template"
+sed -i -e "s@§HOME@$HOME@g" "$template_file"
 
 
 
@@ -27,7 +24,7 @@ replace_or_add_paragraph()
 	file="$1"
 	start_pattern="$2"
 	end_pattern="$3"
-	paragraph_file="$4"
+	data_file="$4"
 
 	start_found=$(sudo cat "$file" | grep --count "$start_pattern")
 	end_found=$(sudo cat "$file" | grep --count "$end_pattern")
@@ -37,9 +34,9 @@ replace_or_add_paragraph()
 		# remove old version
 		sudo sed -i "/$start_pattern/,/$end_pattern/d" "$file"
 		# install new
-		cat "$paragraph_file" | sudo tee -a "$file" 1>/dev/null
+		cat "$data_file" | sudo tee -a "$file" 1>/dev/null
 	elif [[ "$start_found" -eq 0 && "$end_found" -eq 0 ]];then
-		cat "$paragraph_file" | sudo tee -a "$file" 1>/dev/null
+		cat "$data_file" | sudo tee -a "$file" 1>/dev/null
 	else
 		echo "invalid amount of installations found: start: $start_found, end: $end_found"
 		exit 1
@@ -63,7 +60,7 @@ replace_or_add_line()
 	fi
 }
 
-replace_or_add_paragraph "$bashrc" "$start_pattern" "$end_pattern" "$template"
+replace_or_add_paragraph "$bashrc" "$start_pattern" "$end_pattern" "$template_file"
 
 # eternal history needs to be set locally as well
 replace_or_add_line "$HOME/.bashrc" "HISTSIZE=" "export HISTSIZE="
