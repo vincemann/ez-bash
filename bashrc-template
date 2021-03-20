@@ -1,4 +1,5 @@
 
+
 # EZ BASH START	by vincemann @ https://github.com/vincemann/ez-bash ____________________________________________________________________________________________
 
 
@@ -262,4 +263,5 @@ alias x=chmodx_func
 alias size='sudo du -sh'
 alias silent=silent_func
 
-# EZ BASH END	by vincemann @ https://github.com/vincemann/ez-bash ____________________________________________________________________________________________
+# EZ BASH END ____________________________________________________________________________________________
+
