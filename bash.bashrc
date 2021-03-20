@@ -216,18 +216,20 @@ path_func()
 {
 	file="$1"
 	abs_path=$(readlink -n -f "$file")
+	ret=$?
 	echo -n "$abs_path" | copy_func
 	log "$abs_path"
-	return 0
+	return $ret
 }
 
 where_func()
 {
 	file="$1"
 	path=$(whereis "$file"| cut -d " " -f 2)
+	ret=$?
 	echo -n "$path" | copy_func
 	log "$path"
-	return 0
+	return $ret
 }
 
 popup()
@@ -279,6 +281,7 @@ log()
 {
 	msg="$1"
 	echo "$msg"
+	return $?
 	# echo "$msg" >> "/tmp/gil.bash.log"
 }
 
@@ -295,7 +298,7 @@ chmodx_func()
 	if test -f "$file"; then
 		# file does exist
 		repeat_with_sudo_if_not_writeable "$file" "$res_cmd"
-		return 0
+		return $?
 	else
 		loge "file does not exist"
 		return 1
@@ -334,6 +337,7 @@ reapeat_with_sudo_on_fail()
 		# replace with sudo func? What if cmd contains bash functions?
 		# should already use alias though
 		sudo $cmd
+		ret=$?
 	fi
 	return $ret
 }
@@ -353,7 +357,7 @@ copyn_func()
 	silent xclip -selection clipboard
 	ret=$?
 	popup "copied"
-	return $?
+	return $ret
 }
 
 # cuts off last newline
@@ -419,7 +423,7 @@ sudo_func()
 	if [[ -n "$err" ]];then
 		>$2 echo "$err"
 	fi
-	return ret
+	return $ret
 }
 
 
