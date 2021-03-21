@@ -24,6 +24,7 @@ export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 # https://unix.stackexchange.com/questions/119/colors-in-man-pages
 # Get color support for 'less' thus also in manpages
 export LESS="--RAW-CONTROL-CHARS"
+
 [[ -f ~/.LESS_TERMCAP ]] && . ~/.LESS_TERMCAP
 
 path_func()
@@ -221,23 +222,29 @@ silent_func()
 # makes sudo work with bashfunctions and aliases
 sudo_func()
 {
-	out=$(mktemp)
-	err=$(mktemp)
+	# out=$(mktemp)
+	# err=$(mktemp)
 	# maybe need to replace all " with \"
-	cmd=$(echo -en "${@} 1>\"$out\" 2>\"$err\"")
+	# cmd=$(echo -en "${@} 1>\"$out\" 2>\"$err\"")
+	cmd=$(echo -en "${@}")
 	# echo 'command: '"$cmd"''
-	sudo bash -i -c ''"$cmd"'' 1>&2>/dev/null
+
+	# bashrc init code can react to that,
+	# to avoid printing stuff again for this temp subshell
+	export SUDO_BASH_SUBSHELL=true
+	sudo --preserve-env=SUDO_BASH_SUBSHELL bash -i -c ''"$cmd"''
+	unset SUDO_BASH_SUBSHELL
+	# export SUDO_BASH_SUBSHELL=false
 	# bash inherits exit code from subshell
-	ret=$?
-	out=$(cat "$out")
-	err=$(cat "$err")
-	if [[ -n "$out" ]];then
-		echo "$out"
-	fi
-	if [[ -n "$err" ]];then
-		>$2 echo "$err"
-	fi
-	return $ret
+	# out=$(cat "$out")
+	# err=$(cat "$err")
+	# if [[ -n "$out" ]];then
+	# 	echo "$out"
+	# fi
+	# if [[ -n "$err" ]];then
+	# 	>$2 echo "$err"
+	# fi
+	return $?
 }
 
 
