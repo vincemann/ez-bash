@@ -159,7 +159,8 @@ reapeat_with_sudo_on_fail()
 # cuts off last newline if present
 copy_func()
 {
-	xclip -rmlastnl -selection clipboard 1>&2>/dev/null
+	selection=`cat`
+	echo -n "$selection" | xclip -selection clipboard 1>&2>/dev/null
 	ret=$?
 	popup "copied"
 	return $ret
@@ -168,6 +169,7 @@ copy_func()
 
 copyn_func()
 {
+	
 	xclip -selection clipboard 1>&2>/dev/null
 	ret=$?
 	popup "copied"
@@ -177,7 +179,7 @@ copyn_func()
 # cuts off last newline
 paste_func()
 {
-	to_paste=$(xclip -rmlastnl -selection clipboard -o)
+	to_paste=$(xclip -selection clipboard -o | tr -d '\n')
 	ret=$?
 	echo -n "$to_paste"
 	return $ret
@@ -188,7 +190,7 @@ pasten_func()
 {
 	to_paste=$(xclip -selection clipboard -o)
 	ret=$?
-	echo -n "$to_paste"
+	echo "$to_paste"
 	return $ret
 }
 
