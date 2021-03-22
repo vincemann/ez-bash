@@ -24,7 +24,6 @@ export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 # https://unix.stackexchange.com/questions/119/colors-in-man-pages
 # Get color support for 'less' thus also in manpages
 export LESS="--RAW-CONTROL-CHARS"
-
 [[ -f ~/.LESS_TERMCAP ]] && . ~/.LESS_TERMCAP
 
 path_func()

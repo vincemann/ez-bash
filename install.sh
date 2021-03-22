@@ -4,6 +4,13 @@ sudo apt install -y screen
 sudo apt install -y trash-cli
 sudo apt install -y ack
 
+echo "installing sublime editor"
+wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+sudo apt install apt-transport-https
+sudo apt update
+sudo apt install sublime-text
+
 start_pattern="# EZ BASH START"
 end_pattern="# EZ BASH END"
 bashrc="/etc/bash.bashrc"
