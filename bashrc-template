@@ -169,7 +169,6 @@ copy_func()
 
 copyn_func()
 {
-	
 	xclip -selection clipboard 1>&2>/dev/null
 	ret=$?
 	popup "copied"
@@ -248,6 +247,15 @@ sudo_func()
 	return $?
 }
 
+find_containing_func()
+{
+	dir="$1"
+	expression="$2"
+	# searches all files starting from dir $1 that match the regex $2
+	# old version hat -w in it?
+	sudo grep --exclude=*.o --exclude=/dev* -rnHIi "$dir" -e "$expression"
+}
+
 
 # Aliases
 alias rm=rm_func
@@ -271,6 +279,7 @@ alias x=chmodx_func
 alias size='sudo du -sh'
 alias silent=silent_func
 alias targz='tar -xf'
+alias find-containing='find_containing_func'
 
 # EZ BASH END ____________________________________________________________________________________________
 
