@@ -270,6 +270,7 @@ alias e=edit_func
 alias x=chmodx_func
 alias size='sudo du -sh'
 alias silent=silent_func
+alias targz='tar -xf'
 
 # EZ BASH END ____________________________________________________________________________________________
 
