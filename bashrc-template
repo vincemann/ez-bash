@@ -20,7 +20,6 @@ export HISTFILE="§HOME/.bash_eternal_history"
 # http://superuser.com/questions/20900/bash-history-loss
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 # ---------------------------------------------------------------
-
 # https://unix.stackexchange.com/questions/119/colors-in-man-pages
 # Get color support for 'less' thus also in manpages
 export LESS="--RAW-CONTROL-CHARS"
@@ -256,6 +255,13 @@ find_containing_func()
 	sudo grep --exclude=*.o --exclude=/dev* -rnHIi "$dir" -e "$expression"
 }
 
+# working pkill alternative
+# maybe add arg for -9 kill arg
+apkill_func()
+{
+	(ps ax | grep -i "$1") | while read line; do var=$(echo "$line" | awk '{print $1}');echo "$var";kill "$var";done
+}
+
 
 # Aliases
 alias rm=rm_func
@@ -280,6 +286,7 @@ alias size='sudo du -sh'
 alias silent=silent_func
 alias targz='tar -xf'
 alias find-containing='find_containing_func'
+alias apkill='apkill_func'
 
 # EZ BASH END ____________________________________________________________________________________________
 
