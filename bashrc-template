@@ -1,5 +1,3 @@
-
-
 # EZ BASH START	by vincemann @ https://github.com/vincemann/ez-bash ____________________________________________________________________________________________
 
 
@@ -15,7 +13,7 @@ export HISTSIZE=
 export HISTFILESIZE=
 # Change the file location because certain bash sessions truncate .bash_history file upon close.
 # http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
-export HISTFILE="§HOME/.bash_eternal_history"
+export HISTFILE="/home/vince/.bash_eternal_history"
 # Force prompt to write history after every command.
 # http://superuser.com/questions/20900/bash-history-loss
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
@@ -25,7 +23,7 @@ export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 export LESS="--RAW-CONTROL-CHARS"
 [[ -f ~/.LESS_TERMCAP ]] && . ~/.LESS_TERMCAP
 
-path_func()
+path()
 {
 	file="$1"
 	abs_path=$(readlink -n -f "$file")
@@ -35,7 +33,7 @@ path_func()
 	return $ret
 }
 
-where_func()
+where()
 {
 	file="$1"
 	path=$(whereis "$file"| cut -d " " -f 2)
@@ -128,7 +126,7 @@ repeat_with_sudo_if_not_writeable()
 	local status=$?
 	if (( status != 0 ));then
 		log "root"
-		sudo $cmd
+		sudo_func $cmd
 		return $?
 	else
 		log "normal user"
@@ -149,14 +147,14 @@ reapeat_with_sudo_on_fail()
 		log "repeating as root"
 		# replace with sudo func? What if cmd contains bash functions?
 		# should already use alias though
-		sudo $cmd
+		sudo_func $cmd
 		ret=$?
 	fi
 	return $ret
 }
 
 # cuts off last newline if present
-copy_func()
+copy()
 {
 	selection=`cat`
 	echo -n "$selection" | xclip -selection clipboard 1>&2>/dev/null
@@ -166,7 +164,7 @@ copy_func()
 }
 
 
-copyn_func()
+copyn()
 {
 	xclip -selection clipboard 1>&2>/dev/null
 	ret=$?
@@ -175,7 +173,7 @@ copyn_func()
 }
 
 # cuts off last newline
-paste_func()
+paste()
 {
 	to_paste=$(xclip -selection clipboard -o | tr -d '\n')
 	ret=$?
@@ -184,7 +182,7 @@ paste_func()
 }
 
 
-pasten_func()
+pasten()
 {
 	to_paste=$(xclip -selection clipboard -o)
 	ret=$?
@@ -210,7 +208,7 @@ rm_func()
 	return $?
 }
 
-silent_func()
+silent()
 {
 	$@ 1>&2>/dev/null
 	return $?
@@ -219,6 +217,7 @@ silent_func()
 
 
 # makes sudo work with bashfunctions and aliases
+# is buggy if u supply sudo args like -i thats why this function is only used internally
 sudo_func()
 {
 	# out=$(mktemp)
@@ -252,41 +251,44 @@ find_containing_func()
 	expression="$2"
 	# searches all files starting from dir $1 that match the regex $2
 	# old version hat -w in it?
-	sudo grep --exclude=*.o --exclude=/dev* -rnHIi "$dir" -e "$expression"
+	sudo_func grep --exclude=*.o --exclude=/dev* -rnHIi "$dir" -e "$expression"
 }
 
 # working pkill alternative
-# maybe add arg for -9 kill arg
-apkill_func()
+apkill()
 {
 	(ps ax | grep -i "$1") | while read line; do var=$(echo "$line" | awk '{print $1}');echo "$var";kill "$var";done
 }
 
+back()
+{
+	screen -dm "$@"
+}
+
 
 # Aliases
+# export functions if u want to use the alias in shell scripts as well
 alias rm=rm_func
+
 # run in background, if term down, process still runnning
 # works with x so guis will open
-alias back='screen -dm -s'
+export -f back
 # alias backx='screen -dm'
 alias grep='grep --color=auto'
-alias path=path_func
-alias where=where_func
+export -f path
+export -f where
 alias mark='ack --passthru'
-alias copy=copy_func
+export -f copy
 # copy without newline
-alias copyn=copyn_func
-alias paste=paste_func
-alias pasten=pasten_func
-# needs to be done so aliases and bashfunctions work with sudo
-alias sudo=sudo_func
+export -f copyn
+export -f paste
+export -f pasten
 alias e=edit_func
 alias x=chmodx_func
-alias size='sudo du -sh'
-alias silent=silent_func
+alias size='sudo_func du -sh'
+export -f silent
 alias targz='tar -xf'
 alias find-containing='find_containing_func'
-alias apkill='apkill_func'
+export -f apkill
 
 # EZ BASH END ____________________________________________________________________________________________
-
