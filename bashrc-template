@@ -250,7 +250,7 @@ find_containing_func()
 	dir="$1"
 	expression="$2"
 	# searches all files starting from dir $1 that match the regex $2
-	# old version hat -w in it?
+	# old version had -w in it?
 	sudo_func grep --exclude=*.o --exclude=/dev* -rnHIi "$dir" -e "$expression"
 }
 
