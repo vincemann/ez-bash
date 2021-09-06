@@ -4,16 +4,15 @@ sudo apt install -y screen
 sudo apt install -y trash-cli
 sudo apt install -y ack
 
-subl="$1"
-if [ -z "$subl" ];then
-	echo "not installing sublime"
-else
+if [[ -n "$1" ]];then
 	echo "installing sublime editor"
 	wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
 	echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
 	sudo apt install apt-transport-https
 	sudo apt update
 	sudo apt install sublime-text
+else
+	echo "not installing sublime"
 fi
 
 start_pattern="# EZ BASH START"
