@@ -23,6 +23,9 @@ export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 export LESS="--RAW-CONTROL-CHARS"
 [[ -f ~/.LESS_TERMCAP ]] && . ~/.LESS_TERMCAP
 
+# in case you are using ssh-edit project from my repo
+export GUI_EDITOR="subl"
+
 path()
 {
 	file="$1"
