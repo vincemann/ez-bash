@@ -271,6 +271,10 @@ backx()
 	screen -dm "$@"
 }
 
+rm-last-history()
+{
+	sed -i '$ d' "$HISTFILE"
+}
 
 # Aliases
 # export functions if u want to use the alias in shell scripts as well
@@ -297,5 +301,6 @@ export -f silent
 alias targz='tar -xf'
 alias find-containing='find_containing_func'
 export -f apkill
+export -f rm-last-history
 
 # EZ BASH END ____________________________________________________________________________________________
