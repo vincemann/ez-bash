@@ -11,6 +11,8 @@ if [[ -n "$1" ]];then
 	sudo apt install apt-transport-https
 	sudo apt update
 	sudo apt install sublime-text
+	echo "loading keymap config"
+	cp subl-config "$HOME/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap"
 else
 	echo "not installing sublime"
 fi
