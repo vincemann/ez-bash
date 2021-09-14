@@ -260,8 +260,13 @@ apkill()
 	(ps ax | grep -i "$1") | while read line; do var=$(echo "$line" | awk '{print $1}');echo "$var";kill "$var";done
 }
 
-# not always working as expected
+# not always working as expected, use backx instead if not working
 back()
+{
+	screen -dm -s"$@"
+}
+
+backx()
 {
 	screen -dm "$@"
 }
@@ -274,6 +279,7 @@ alias rm=rm_func
 # run in background, if term down, process still runnning
 # works with x so guis will open
 export -f back
+export -f backx
 # alias backx='screen -dm'
 alias grep='grep --color=auto'
 export -f path
