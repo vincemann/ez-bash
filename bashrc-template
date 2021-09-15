@@ -266,7 +266,7 @@ apkill()
 # not always working as expected, use backx instead if not working
 back()
 {
-	screen -dm -s"$@"
+	screen -dm -s "$@"
 }
 
 backx()
