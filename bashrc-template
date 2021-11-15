@@ -23,7 +23,7 @@ export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 export LESS="--RAW-CONTROL-CHARS"
 [[ -f ~/.LESS_TERMCAP ]] && . ~/.LESS_TERMCAP
 
-# in case you are using ssh-edit project from my repo
+# in case you are using https://github.com/vincemann/ssh-edit project from my repo
 export GUI_EDITOR="subl"
 
 path()
@@ -254,7 +254,7 @@ find_containing_func()
 	expression="$2"
 	# searches all files starting from dir $1 that match the regex $2
 	# old version had -w in it?
-	sudo_func grep --exclude=*.o --exclude=/dev* -rnHIi "$dir" -e "$expression"
+	sudo_func grep --exclude=*.o --exclude=/dev* --exclude=/proc* -rnHIi "$dir" -e "$expression"
 }
 
 # working pkill alternative
