@@ -97,7 +97,7 @@ sed -i -e "s@§HOME@$HOME@g" "$template_file"
 
 
 
-sudo bash ./lib/replace_or_add_paragraph "$bashrc" "$start_pattern" "$end_pattern" "$template_file"
+sudo bash ./lib/replace_or_add_paragraph.sh "$bashrc" "$start_pattern" "$end_pattern" "$template_file"
 
 # eternal history needs to be set locally as well
 ./lib/replace_or_add_line.sh "$HOME/.bashrc" "HISTSIZE=" "export HISTSIZE="
