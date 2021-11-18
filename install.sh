@@ -39,7 +39,7 @@ install_github_extension()
 	git clone "https://github.com/vincemann/"$repo".git"
 	cd $repo
 	echo "args for installation: ${@:2}"
-	# ./install.sh "${@:2}"
+	./install.sh "${@:2}"
 	cd ..
 }
 
@@ -83,7 +83,7 @@ end_pattern="# EZ BASH END"
 bashrc="/etc/bash.bashrc"
 if [[[ "$LOCAL" = "local" ]]; then
 	bashrc="$HOME/.bashrc"
-else
+fi
 
 # backup
 mkdir -p "$HOME/.ezbash-suite-backups"
