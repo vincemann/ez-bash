@@ -81,7 +81,7 @@ start_pattern="# EZ BASH START"
 end_pattern="# EZ BASH END"
 
 bashrc="/etc/bash.bashrc"
-if [[[ "$LOCAL" = "local" ]]; then
+if [[ "$LOCAL" = "local" ]]; then
 	bashrc="$HOME/.bashrc"
 fi
 
