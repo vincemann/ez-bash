@@ -10,7 +10,7 @@ LOCAL=$2
 
 print_usage()
 {
-	echo "usage ./install gui|terminal local|system [extensions...]"
+	echo "(ez-bash) usage ./install gui|terminal local|system [extensions...]"
 	echo "possible extensions: sublime, cd-history, last-file-history, ssh-file-edit"
 	exit 1
 }
@@ -64,7 +64,7 @@ install_extensions()
 			fi
 		elif [[ "$extension" = "cd-history" ]]; then
 			install_github_extension "$extension" $GUI $LOCAL
-		elif [[ "$extension" = "last-file-history" ]]; then
+		elif [[ "$extension" = "file-history" ]]; then
 			install_github_extension "$extension" $GUI $LOCAL
 		elif [[ "$extension" = "ssh-edit" ]]; then
 			install_github_extension "$extension" $GUI $LOCAL
