@@ -1,6 +1,6 @@
 import sys
 
-def find_recent_dirs(n,match_word=""):
+def find_recent_dirs(dir_history_file,n,match_word=""):
     recent_dirs = []
     if dir_history_file:
         with open(dir_history_file, 'r') as file:
