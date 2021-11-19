@@ -22,6 +22,7 @@ def show_terminal_selection(l):
     eprint("supply index")
     for e in l:
         eprint(str(index)+": %s" % e)
+        index = index+1
     try:
         index = int(input())
     except Exception as e:
