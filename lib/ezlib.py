@@ -64,7 +64,10 @@ def show_gui_selection(l, size=17):
 
     root.bind("<Return>", exit_gui)
     root.mainloop()
-    if result_index is None:
+    try:
+        if result_index is None:
+            return None
+    except NameError as e:
         return None
     try:
         return l[result_index]
