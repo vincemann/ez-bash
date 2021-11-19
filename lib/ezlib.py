@@ -30,7 +30,11 @@ def show_terminal_selection(l):
     if index is None:
         eprint("nothing selected")
         return None
-    return l[index]
+    try:
+        return l[index]
+    except IndexError as e:
+        eprint("index out of range")
+        return None
 
 
 # GUI
@@ -64,7 +68,11 @@ def show_gui_selection(l, size=17):
     root.mainloop()
     if result_index is None:
         return None
-    return l[result_index]
+    try:
+        return l[result_index]
+    except IndexError as e:
+        eprint("index out of range")
+        return None
 
 def put_to_clipboard(text):
     import pyperclip
