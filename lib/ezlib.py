@@ -20,7 +20,15 @@ def show_terminal_selection(l):
     index = 0
     for e in l:
         print(str(index)+": %s" % e)
-    index = input("supply index:")
+    try:
+        index = int(input("supply index:"))
+    except Exception as e:
+        eprint("nothing selected | Exception")
+        eprint(e)
+        return None
+    if index is None:
+        eprint("nothing selected")
+        return None
     return l[index]
 
 
@@ -35,19 +43,26 @@ def show_gui_selection(l, size=17):
     listbox.config(width=0)
     listbox.pack()
     for item in l:
+        eprint("inserting item: %s" % item)
         listbox.insert("end", item)
     listbox.select_set(0)
     listbox.focus_set()
 
     def exit_gui(event):
         global result_index
-        result_index = listbox.curselection()[0]
-        print("result_index: %d" % result_index)
-        root.destroy()
+        try
+            result_index = listbox.curselection()[0]
+            print("result_index: %d" % result_index)
+            root.destroy()
+        except Exception as e:
+            eprint("nothing selected | Exception")
+            eprint(e)
+            result_index=None
 
     root.bind("<Return>", exit_gui)
     root.mainloop()
-
+    if result_index is None:
+        return None
     return l[result_index]
 
 def put_to_clipboard(text):
