@@ -7,6 +7,7 @@ def find_recent_dirs(dir_history_file,n,match_word=""):
             while len(recent_dirs) < n :
                 recent_dir = file.readline()
                 if recent_dir == "":
+                    eprint("reached end of dir-history file")
                     break
                 if match_word != "":
                     if match_word.lower() in recent_dir.lower():
