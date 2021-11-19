@@ -50,7 +50,7 @@ def show_gui_selection(l, size=17):
 
     def exit_gui(event):
         global result_index
-        try
+        try:
             result_index = listbox.curselection()[0]
             print("result_index: %d" % result_index)
             root.destroy()
