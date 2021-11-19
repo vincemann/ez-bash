@@ -7,7 +7,7 @@ def find_recent_dirs(dir_history_file,n,match_word=""):
             while len(recent_dirs) < n :
                 recent_dir = file.readline()
                 if recent_dir == "":
-                    eprint("reached end of dir-history file")
+                    # eprint("reached end of dir-history file")
                     break
                 if match_word != "":
                     if match_word.lower() in recent_dir.lower():
@@ -45,7 +45,7 @@ def show_gui_selection(l, size=17):
     listbox.config(width=0)
     listbox.pack()
     for item in l:
-        eprint("inserting item: %s" % item)
+        # eprint("inserting item: %s" % item)
         listbox.insert("end", item)
     listbox.select_set(0)
     listbox.focus_set()
@@ -54,7 +54,7 @@ def show_gui_selection(l, size=17):
         global result_index
         try:
             result_index = listbox.curselection()[0]
-            print("result_index: %d" % result_index)
+            # print("result_index: %d" % result_index)
             root.destroy()
         except Exception as e:
             eprint("nothing selected | Exception")
