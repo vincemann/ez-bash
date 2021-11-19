@@ -1,11 +1,5 @@
 import sys
 
-def remove_emtpy_lines(file):
-    with open(file, "r") as f:
-    for line in f:
-        cleanedLine = line.strip()
-        if cleanedLine: # is not empty
-            print(cleanedLine)
 
 def find_recent_dirs(dir_history_file,n,match_word=""):
     recent_dirs = []
