@@ -23,19 +23,14 @@ def show_terminal_selection(l):
     for e in l:
         eprint(str(index)+": %s" % e)
         index = index+1
-    try:
-        index = int(input())
-    except Exception as e:
-        eprint("nothing selected | Exception")
-        eprint(e)
-        return None
+    index = int(input())
     if index is None:
         eprint("nothing selected")
         return None
     try:
         return l[index]
-    except IndexError as e:
-        eprint("index out of range")
+    except Exception as e:
+        eprint("wrong input")
         return None
 
 
@@ -72,8 +67,8 @@ def show_gui_selection(l, size=17):
         return None
     try:
         return l[result_index]
-    except IndexError as e:
-        eprint("index out of range")
+    except Exception as e:
+        eprint("wrong input")
         return None
 
 def put_to_clipboard(text):
@@ -85,4 +80,5 @@ def put_to_clipboard(text):
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+
 
