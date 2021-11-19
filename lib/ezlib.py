@@ -19,10 +19,11 @@ def find_recent_dirs(dir_history_file,n,match_word=""):
 
 def show_terminal_selection(l):
     index = 0
+    eprint("supply index")
     for e in l:
-        print(str(index)+": %s" % e)
+        eprint(str(index)+": %s" % e)
     try:
-        index = int(input("supply index:"))
+        index = int(input())
     except Exception as e:
         eprint("nothing selected | Exception")
         eprint(e)
