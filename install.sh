@@ -41,6 +41,7 @@ install_github_extension()
 	echo "args for installation: ${@:2}"
 	./install.sh "${@:2}"
 	cd ..
+	rm -rf $repo
 }
 
 install_extensions()
