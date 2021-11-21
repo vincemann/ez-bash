@@ -40,12 +40,12 @@ install_github_extension()
 	sudo mkdir -p "$install_dir"
 	repo=$1
 	old_dir=$(pwd)
-	cd "$install_dir"
+	command cd "$install_dir"
 	git clone "https://github.com/vincemann/"$repo".git"
-	cd "$repo"
+	command cd "./$repo"
 	echo "args for installation: ${@:2}"
 	./install.sh "${@:2}"
-	cd "$old_dir"
+	command cd "$old_dir"
 }
 
 install_extensions()
