@@ -65,9 +65,9 @@ install_extensions()
 		elif [[ "$extension" = "cd-history" ]]; then
 			install_github_extension "$extension" $GUI $LOCAL
 		elif [[ "$extension" = "file-history" ]]; then
-			install_github_extension "$extension" $GUI $LOCAL
+			install_github_extension "$extension" $GUI
 		elif [[ "$extension" = "ssh-edit" ]]; then
-			install_github_extension "$extension" $GUI $LOCAL
+			install_github_extension "$extension"
 		else
 			print_usage
 		fi
