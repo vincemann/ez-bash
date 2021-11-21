@@ -38,10 +38,11 @@ install_github_extension()
 
 	install_dir="/opt/ezbash/"
 	sudo mkdir -p "$install_dir"
+	sudo chown -R "${USER}:${USER}" "$install_dir"
 	repo=$1
 	old_dir=$(pwd)
 	command cd "$install_dir"
-	sudo git clone "https://github.com/vincemann/"$repo".git"
+	git clone "https://github.com/vincemann/"$repo".git"
 	command cd "./$repo"
 	echo "args for installation: ${@:2}"
 	./install.sh "${@:2}"
