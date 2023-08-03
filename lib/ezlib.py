@@ -43,6 +43,7 @@ def show_gui_selection(l, size=17):
     global result_index
 
     listbox = tk.Listbox(root, font=('Times', size))
+    listbox.config(width=0)
 
 
     # Calculate the number of items that can be displayed on the screen without scrolling
@@ -53,7 +54,7 @@ def show_gui_selection(l, size=17):
     # Set the height of the Listbox to display maximum items, allows scrolling if needed
     listbox.config(height=display_items)
     listbox.pack()
-    
+
     for item in l:
         # eprint("inserting item: %s" % item)
         listbox.insert("end", item)
