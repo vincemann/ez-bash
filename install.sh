@@ -8,6 +8,7 @@ sudo apt install -y git
 GUI=$1
 LOCAL=$2
 
+# always execute as your user not with sudo or root
 print_usage()
 {
 	echo "(ez-bash) usage ./install gui|terminal local|system [extensions...]"
@@ -87,8 +88,10 @@ start_pattern="# EZ BASH START"
 end_pattern="# EZ BASH END"
 
 bashrc="/etc/bash.bashrc"
+bash_functions_dir="/etc/bash-functions"
 if [[ "$LOCAL" = "local" ]]; then
 	bashrc="$HOME/.bashrc"
+	bash_functions_dir="$HOME/bash-functions"
 fi
 
 # backup
@@ -101,6 +104,12 @@ cat bashrc-template > "$template_file"
 
 sed -i -e "s@§HOME@$HOME@g" "$template_file"
 
+
+# add/replace bash functions
+rm -rf "$bash_functions_dir"
+sudo mkdir -p "$bash_functions_dir"
+sudo chown -R "${USER}:${USER}" "$bash_functions_dir"
+cp ez-bash-functions "$bash_functions_dir"
 
 
 sudo bash ./lib/replace_or_add_paragraph.sh "$bashrc" "$start_pattern" "$end_pattern" "$template_file"

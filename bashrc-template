@@ -26,284 +26,50 @@ export LESS="--RAW-CONTROL-CHARS"
 # in case you are using https://github.com/vincemann/ssh-edit project from my repo
 export GUI_EDITOR="subl"
 
-path()
-{
-	file="$1"
-	abs_path=$(readlink -n -f "$file")
-	ret=$?
-	echo -n "$abs_path" | copy
-	log "$abs_path"
-	return $ret
-}
-
-where()
-{
-	file="$1"
-	path=$(whereis "$file"| cut -d " " -f 2)
-	ret=$?
-	echo -n "$path" | copy
-	log "$path"
-	return $ret
-}
-
-popup()
-{
-	# maybe later add new line support:
-	# https://unix.stackexchange.com/questions/231089/how-to-move-forward-in-a-line-in-bash-with-echo
-	msg="$1"
-	time="$2"
-	if [[ -z "$time" ]];then
-		time="1000"
-	fi
-	notify-send "$msg" -t "$time"
-	return $?
-}
+source /etc/bash-functions/ez-bash-functions.sh
 
 
-# merge config of subl user & root
-edit_func()
-{
-	# turn command into string
-	file="$1"
-	cmd_format="subl %s"
-	printf -v cmd "$cmd_format" "$file"	
-	if test -f "$file"; then
-		# file does exist
-		log "editing file"
-		repeat_with_sudo_if_not_writeable "$file" "$cmd"
-	else
-		# file does not exist
-		log "creating file"
-		dir="$file"
-		if [[ "$file" == *"/"* ]]; then
-  			# is path
-  			dir=$(dirname "$file")
-  		else
-  			dir=$(pwd)
-		fi
-		repeat_with_sudo_if_not_writeable "$dir" "$cmd"
-	fi
-	return $?
-}
-
-resolve_alias()
-{
-	echo "${BASH_ALIASES[$1]}"
-}
-
-log()
-{
-	msg="$1"
-	echo "$msg"
-	return $?
-	# echo "$msg" >> "/tmp/gil.bash.log"
-}
-
-loge()
-{
-	>$2 log "$@"
-}
-
-chmodx_func()
-{
-	file="$1"
-	cmd="chmod a+x %s"
-	printf -v res_cmd "$cmd" "$file"	
-	if test -f "$file"; then
-		# file does exist
-		repeat_with_sudo_if_not_writeable "$file" "$res_cmd"
-		return $?
-	else
-		loge "file does not exist"
-		return 1
-	fi
-}
-
-# USE WITH CAUTION
-repeat_with_sudo_if_not_writeable()
-{
-	file="$1"
-	cmd="$2"
-#	log "command :$cmd"
-	test -w "$file"
-	local status=$?
-	if (( status != 0 ));then
-		log "root"
-		sudo_func $cmd
-		return $?
-	else
-		log "normal user"
-		$cmd
-		return $?
-	fi
-
-}
-
-# USE WITH CAUTION
-reapeat_with_sudo_on_fail()
-{
-	cmd="$1"
-	# try execute command with normal rights
-	$cmd
-	ret=$?
-	if (( status != 0 ));then
-		log "repeating as root"
-		# replace with sudo func? What if cmd contains bash functions?
-		# should already use alias though
-		sudo_func $cmd
-		ret=$?
-	fi
-	return $ret
-}
-
-# cuts off last newline if present
-copy()
-{
-	selection=`cat`
-	echo -n "$selection" | xclip -selection clipboard 1>&2>/dev/null
-	ret=$?
-	popup "copied"
-	return $ret
-}
-
-
-copyn()
-{
-	xclip -selection clipboard 1>&2>/dev/null
-	ret=$?
-	popup "copied"
-	return $ret
-}
-
-# cuts off last newline
-paste()
-{
-	to_paste=$(xclip -selection clipboard -o | tr -d '\n')
-	ret=$?
-	echo -n "$to_paste"
-	return $ret
-}
-
-
-pasten()
-{
-	to_paste=$(xclip -selection clipboard -o)
-	ret=$?
-	echo "$to_paste"
-	return $ret
-}
-
-# see man trash*
-# rm file 		-> puts file to trash
-# rm -ff file 		-> deletes file fully
-rm_func()
-{
-	force="$1"
-	if [[ "$force" == "-ff" ]];then
-		log "forced remove"
-		shift 1
-		# echo "args: $@"
-		rm -rf "$@"
-		return $?
-	fi
-	log "move to trash"
-	trash "$@"
-	return $?
-}
-
-silent()
-{
-	$@ 1>&2>/dev/null
-	return $?
-}
-
-
-
-# makes sudo work with bashfunctions and aliases
-# is buggy if u supply sudo args like -i thats why this function is only used internally
-sudo_func()
-{
-	# out=$(mktemp)
-	# err=$(mktemp)
-	# maybe need to replace all " with \"
-	# cmd=$(echo -en "${@} 1>\"$out\" 2>\"$err\"")
-	cmd=$(echo -en "${@}")
-	# echo 'command: '"$cmd"''
-
-	# bashrc init code can react to that,
-	# to avoid printing stuff again for this temp subshell
-	export SUDO_BASH_SUBSHELL=true
-	sudo --preserve-env=SUDO_BASH_SUBSHELL bash -i -c ''"$cmd"''
-	unset SUDO_BASH_SUBSHELL
-	# export SUDO_BASH_SUBSHELL=false
-	# bash inherits exit code from subshell
-	# out=$(cat "$out")
-	# err=$(cat "$err")
-	# if [[ -n "$out" ]];then
-	# 	echo "$out"
-	# fi
-	# if [[ -n "$err" ]];then
-	# 	>$2 echo "$err"
-	# fi
-	return $?
-}
-
-find_containing_func()
-{
-	dir="$1"
-	expression="$2"
-	# searches all files starting from dir $1 that match the regex $2
-	# old version had -w in it?
-	sudo_func grep --exclude=*.o --exclude=/dev* --exclude=/proc* -rnHIi "$dir" -e "$expression"
-}
-
-# working pkill alternative
-apkill()
-{
-	(ps ax | grep -i "$1") | while read line; do var=$(echo "$line" | awk '{print $1}');echo "$var";kill "$var";done
-}
-
-# not always working as expected, use backx instead if not working
-back()
-{
-	screen -dm -s "$@"
-}
-
-backx()
-{
-	screen -dm "$@"
-}
-
-rm-last-history()
-{
-	sed -i '$ d' "$HISTFILE"
-}
-
-# Aliases
-# export functions if u want to use the alias in shell scripts as well
-alias rm=rm_func
+# export functions from /etc/bash-functions/ez-bash-functions | scripts where functions are not availiable bc export -f did not work
+# can source the functions file then
 
 # run in background, if term down, process still runnning
 # works with x so guis will open
 export -f back
 export -f backx
 # alias backx='screen -dm'
-alias grep='grep --color=auto'
+
 export -f path
 export -f where
-alias mark='ack --passthru'
+
 export -f copy
 # copy without newline
 export -f copyn
 export -f paste
 export -f pasten
+
+export -f silent
+
+export -f apkill
+export -f rm-last-history
+
+# [edited by vincemann @ 2023-11-02 - 11-02-26 CET ]
+export -f edit_func
+export -f repeat_with_sudo_if_not_writeable
+export -f repeat_with_sudo_on_fail
+export -f log
+export -f loge
+
+
+# Aliases
+# export functions if u want to use the alias in shell scripts as well
+alias rm=rm_func
+alias grep='grep --color=auto'
+alias mark='ack --passthru'
 alias e=edit_func
 alias x=chmodx_func
 alias size='sudo_func du -sh'
-export -f silent
 alias targz='tar -xf'
 alias find-containing='find_containing_func'
-export -f apkill
-export -f rm-last-history
+
 
 # EZ BASH END ____________________________________________________________________________________________
