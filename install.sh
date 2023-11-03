@@ -94,6 +94,8 @@ if [[ "$LOCAL" = "local" ]]; then
 	bash_functions_dir="$HOME/bash-functions"
 fi
 
+bash_functions_file_path="$bash_functions_dir/ez-bash-functions"
+
 # backup
 mkdir -p "$HOME/.ezbash-suite-backups"
 sudo cp "$bashrc" "$HOME/.ezbash-suite-backups/.ez-bash-bashrc.bak"
@@ -105,11 +107,11 @@ cat bashrc-template > "$template_file"
 sed -i -e "s@§HOME@$HOME@g" "$template_file"
 
 
-# add/replace bash functions
-rm -rf "$bash_functions_dir"
+# add/replace bash functions file and add bash functions dir if needed
+rm -f "$bash_functions_file_path"
 sudo mkdir -p "$bash_functions_dir"
 sudo chown -R "${USER}:${USER}" "$bash_functions_dir"
-cp ez-bash-functions "$bash_functions_dir"
+cp ez-bash-functions "$bash_functions_file_path"
 
 
 sudo bash ./lib/replace_or_add_paragraph.sh "$bashrc" "$start_pattern" "$end_pattern" "$template_file"
@@ -118,7 +120,8 @@ sudo bash ./lib/replace_or_add_paragraph.sh "$bashrc" "$start_pattern" "$end_pat
 ./lib/replace_or_add_line.sh "$HOME/.bashrc" "HISTSIZE=" "export HISTSIZE="
 ./lib/replace_or_add_line.sh "$HOME/.bashrc" "HISTFILESIZE=" "export HISTFILESIZE="
 ./lib/replace_or_add_line.sh "$HOME/.bashrc" "HISTCONTROL=" "export HISTCONTROL=ignoreboth"
-./lib/replace_or_add_line.sh "$HOME/.bashrc" "EZ_BASH_FUNCTIONS_DIR=$bash_functions_dir
+# not needed bc I dont source functions, I define them twice
+# ./lib/replace_or_add_line.sh "$HOME/.bashrc" "EZ_BASH_FUNCTIONS_DIR=$bash_functions_dir
 
 
 install_extensions ${@:3}
