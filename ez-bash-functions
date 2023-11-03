@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# defined functions here again, bc in some env functions cant be found in bash scripts even when exported
+# so the scripts can still use these by sourcing this file
+
 path()
 {
 	file="$1"
@@ -114,7 +117,7 @@ repeat_with_sudo_if_not_writeable()
 }
 
 # USE WITH CAUTION
-reapeat_with_sudo_on_fail()
+repeat_with_sudo_on_fail()
 {
 	cmd="$1"
 	# try execute command with normal rights

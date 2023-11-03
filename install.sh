@@ -118,6 +118,7 @@ sudo bash ./lib/replace_or_add_paragraph.sh "$bashrc" "$start_pattern" "$end_pat
 ./lib/replace_or_add_line.sh "$HOME/.bashrc" "HISTSIZE=" "export HISTSIZE="
 ./lib/replace_or_add_line.sh "$HOME/.bashrc" "HISTFILESIZE=" "export HISTFILESIZE="
 ./lib/replace_or_add_line.sh "$HOME/.bashrc" "HISTCONTROL=" "export HISTCONTROL=ignoreboth"
+./lib/replace_or_add_line.sh "$HOME/.bashrc" "EZ_BASH_FUNCTIONS_DIR=$bash_functions_dir
 
 
 install_extensions ${@:3}
