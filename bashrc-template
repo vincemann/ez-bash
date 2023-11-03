@@ -23,13 +23,14 @@ export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 export LESS="--RAW-CONTROL-CHARS"
 [[ -f ~/.LESS_TERMCAP ]] && . ~/.LESS_TERMCAP
 
-# set by install script
-EZ_BASH_FUNCTIONS_DIR=
+
 
 # in case you are using https://github.com/vincemann/ssh-edit project from my repo
 export GUI_EDITOR="subl"
 
 # wont work like that bc I also want to export functions
+# set by install script
+# EZ_BASH_FUNCTIONS_DIR=
 # source $EZ_BASH_FUNCTIONS_DIR/ez-bash-functions
 
 
