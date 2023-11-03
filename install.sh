@@ -1,4 +1,10 @@
 #!/bin/bash
+
+
+
+INSTALLING_USER=$SUDO_USER
+
+
 sudo apt install -y xclip
 sudo apt install -y screen
 sudo apt install -y trash-cli
@@ -12,7 +18,7 @@ LOCAL=$2
 print_usage()
 {
 	echo "(ez-bash) usage ./install gui|terminal local|system [extensions...]"
-	echo "possible extensions: sublime, cd-history, last-file-history, ssh-file-edit"
+	echo "possible extensions: cd-history, file-history, ssh-edit"
 	exit 1
 }
 
@@ -27,7 +33,7 @@ fi
 
 
 if [[ $LOCAL = "local" ]];then
-	echo "installing locally"
+	echo "installing locally for user "
 elif [[ $LOCAL = "system" ]];then
 	echo "installing system wide"
 else
@@ -55,21 +61,7 @@ install_extensions()
 	for (( i=1; i<=$#; i++)); do
     	extension="${!i}"
     	echo "installing extension: $extension"
-    	if [[ "$extension" = "sublime" ]]; then
-    		if [[ "$GUI" = "terminal" ]]; then
-    			echo "WARN: you are installing the terminal version, installing sublime editor might not be very useful"
-    		fi
-			wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-			echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-			sudo apt install apt-transport-https
-			sudo apt update
-			sudo apt install sublime-text
-			echo "loading keymap config"
-			cp subl-config "$HOME/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap"
-			if [[[ "$LOCAL" = "system" ]]; then
-				sudo cp subl-config "/root/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap"	
-			fi
-		elif [[ "$extension" = "cd-history" ]]; then
+    	if [[ "$extension" = "cd-history" ]]; then
 			install_github_extension "$extension" $GUI $LOCAL
 		elif [[ "$extension" = "file-history" ]]; then
 			install_github_extension "$extension" $GUI
