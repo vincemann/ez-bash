@@ -31,6 +31,7 @@ if [[ $GUI = "gui" ]]; then
 	# https://github.com/st4s1k/gsudo - i want to display gui sudo prompt when executing sudo in gui env
 	echo "install dependency gsudo from github"
 	mkdir -p /tmp/gsudo
+	sudo rm -f /usr/local/bin/gsudo
 	git clone git@github.com:st4s1k/gsudo.git /tmp/gsudo/
 	chmod +x /tmp/gsudo/gsudo_installer
 	bash /tmp/gsudo/gsudo_installer

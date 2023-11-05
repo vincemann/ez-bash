@@ -210,7 +210,6 @@ sudo_func()
 	# echo 'command: '"$cmd"''
 
 	gui=`tset -q`
-	export SUDO_BASH_SUBSHELL=true
 	echo "tset result: $gui" >> /tmp/sudo.log
 	if [[ -z "$gui" ]]; then
 		# gui env -> display gui prompt for sudo pw
@@ -219,10 +218,12 @@ sudo_func()
 	else
 		# terminal env
 		# use normal terminal sudo prompt
+		export SUDO_BASH_SUBSHELL=true
 		echo "term env will display terminal pw prompt" >> /tmp/sudo.log
 		sudo --preserve-env=SUDO_BASH_SUBSHELL bash -i -c ''"$cmd"''
+		unset SUDO_BASH_SUBSHELL
 	fi
-	unset SUDO_BASH_SUBSHELL
+	
 	# bashrc init code can react to that,
 	# to avoid printing stuff again for this temp subshell
 	
