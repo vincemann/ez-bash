@@ -11,13 +11,6 @@ sudo apt install -y trash-cli
 sudo apt install -y ack
 sudo apt install -y git
 
-# https://github.com/st4s1k/gsudo - i want to display gui sudo prompt when executing sudo in gui env
-echo "install dependency gsudo from github"
-git clone git@github.com:st4s1k/gsudo.git /tmp/
-chmod +x /tmp/gsudo/gsudo_installer
-bash /tmp/gsudo/gsudo_installer
-rm -rf /tmp/gsudo
-echo "done with installing gsudo"
 
 
 GUI=$1
@@ -34,6 +27,16 @@ print_usage()
 
 if [[ $GUI = "gui" ]]; then
 	echo "installing gui version"
+
+	# https://github.com/st4s1k/gsudo - i want to display gui sudo prompt when executing sudo in gui env
+	echo "install dependency gsudo from github"
+	mkdir -p /tmp/gsudo
+	git clone git@github.com:st4s1k/gsudo.git /tmp/gsudo/
+	chmod +x /tmp/gsudo/gsudo_installer
+	bash /tmp/gsudo/gsudo_installer
+	rm -rf /tmp/gsudo
+	echo "done with installing gsudo"
+
 elif [[ $GUI = "terminal" ]]; then
 	echo "installing terminal version"
 else
