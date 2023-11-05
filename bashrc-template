@@ -232,6 +232,7 @@ silent()
 
 # makes sudo work with bashfunctions and aliases
 # is buggy if u supply sudo args like -i thats why this function is only used internally
+# also checks if gui env and in that case display gui prompt 'https://github.com/st4s1k/gsudo'
 sudo_func()
 {
 	# out=$(mktemp)
@@ -241,11 +242,23 @@ sudo_func()
 	cmd=$(echo -en "${@}")
 	# echo 'command: '"$cmd"''
 
+	gui=`tset -q`
+	export SUDO_BASH_SUBSHELL=true
+	echo "tset result: $gui" >> /tmp/sudo.log
+	if [[ -z "$gui" ]]; then
+		# gui env -> display gui prompt for sudo pw
+		echo "gui env will display gui pw prompt" >> /tmp/sudo.log
+		gsudo "$cmd"
+	else
+		# terminal env
+		# use normal terminal sudo prompt
+		echo "term env will display terminal pw prompt" >> /tmp/sudo.log
+		sudo --preserve-env=SUDO_BASH_SUBSHELL bash -i -c ''"$cmd"''
+	fi
+	unset SUDO_BASH_SUBSHELL
 	# bashrc init code can react to that,
 	# to avoid printing stuff again for this temp subshell
-	export SUDO_BASH_SUBSHELL=true
-	sudo --preserve-env=SUDO_BASH_SUBSHELL bash -i -c ''"$cmd"''
-	unset SUDO_BASH_SUBSHELL
+	
 	# export SUDO_BASH_SUBSHELL=false
 	# bash inherits exit code from subshell
 	# out=$(cat "$out")
